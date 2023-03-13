@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLAAPANALYSE</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.6.1"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Georgia, Cambria, 'Times New Roman', Times, serif;
+            line-height: 1.8;
+            max-width: 900px;
+            min-height: 100vh;
+            margin: 0 auto;
+            padding: 2rem 1.25rem;
+        }
+        main {
+            display: grid;
+            gap: 1rem;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        thead {
+            border-bottom: 1px solid black;
+        }
+        th {
+            text-align: left;
+        }
+        th, td {
+            padding: .5rem .25rem;
+        }
+        .issue {
+            background-color: darkred;
+            color: whitesmoke;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Slaapanalyse</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Toelichting</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Indicator</th>
+                        <th>Variabele</th>
+                        <th>Norm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Slaapduur</th>
+                        <td>Totaalduur slapen</td>
+                        <td>Minstens 7 uur per nacht (<a href="https://doi.org/10.1016/j.socscimed.2010.05.041">Buxton &amp; Marcelli, 2010</a>)</td>
+                    </tr>
+                    <tr>
+                        <th>Slaapefficiëntie</th>
+                        <td>Verhouding in bed/slapen</td>
+                        <td>Minstens 85% (<a href="https://psycnet.apa.org/doi/10.1037/a0028204">Astill e.a., 2012</a>)</td>
+                    </tr>
+                    <tr>
+                        <th rowspan="3">slaapcontinuïteit</th>
+                        <td>Inslaapduur</td>
+                        <td>Binnen 30 min.</td>
+                    </tr>
+                    <tr>
+                        <td>Aantal keer wakker</td>
+                        <td>Max. 2 keer wakker</td>
+                    </tr>
+                    <tr>
+                        <td>Totaal duur wakker</td>
+                        <td>Minder dan 90 min. wakker na inslapen</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section>
+            <input type="file" id="fileInput">
+            <div id="fileContent"></div>
+        </section>
+        <h2>Tabel</h2>
+        <div id="table"></div>
+        <h2>Grafiek</h2>
+        <div id="graph"></div>
+    </main>
+<script type="module">
+    import { analyzeSleepPatterns } from "./src/sleepanalysis.js"
+
+    const fileInput = document.getElementById("fileInput")
+    const fileContent = document.getElementById("fileContent")
+
+    fileInput.addEventListener("change", (event) => {
+        const file = event.target.files[0]
+        const reader = new FileReader()
+
+        reader.readAsText(file)
+
+        reader.onload = (event) => {
+            analyzeSleepPatterns(event, "#graph", "#table")
+        }
+    })
+</script>
+</body>
