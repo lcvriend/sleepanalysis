@@ -16,6 +16,9 @@ body {
 header {
     position: relative;
 }
+header h1 {
+    font-size: 3rem;
+}
 header img {
     position: absolute;
     right: 0;
