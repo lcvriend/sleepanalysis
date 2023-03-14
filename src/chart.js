@@ -1,5 +1,5 @@
-export function renderChart(chartId, data) {
-    const spec = getSpecChart()
+export function renderChart(chartId, specGetter, data) {
+    const spec = specGetter()
     spec.data.values = data.values
     vegaEmbed(chartId, spec)
         .then(result => {})
@@ -7,32 +7,41 @@ export function renderChart(chartId, data) {
 }
 
 
-function getSpecChart() {
-    return {
-        "$schema": "https://vega.github.io/schema/vega-lite/v5.6.1.json",
-        "config": {
-            "view": {
-                "continuousHeight": 300,
-                "continuousWidth": 300
-            },
-            "font": "Georgia",
-            "header": {
-                "titleFontSize": 16,
-                "labelFontSize": 14
-            },
-            "axis": {
-                "titleFontSize": 16,
-                "labelFontSize": 14,
-                "labelAngle": 270,
-                "grid": true
-            },
-            "legend": {
-                "titleFontSize": 16,
-                "labelFontSize": 14
-            }
+const baseSpec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.6.1.json",
+    "config": {
+        "view": {
+            "continuousHeight": 300,
+            "continuousWidth": 300
         },
-        "data": {
-            "values": []
+        "font": "Georgia",
+        "header": {
+            "titleFontSize": 16,
+            "labelFontSize": 14
+        },
+        "axis": {
+            "titleFontSize": 16,
+            "labelFontSize": 14,
+            "labelAngle": 270,
+            "grid": true
+        },
+        "legend": {
+            "titleFontSize": 16,
+            "labelFontSize": 14
+        }
+    },
+    "data": {
+        "values": []
+    },
+}
+
+
+export function getSpecChartTimelines() {
+    const spec = {
+        "title": {
+            "text": "Tijdlijnen bij geobserveerde slaappatronen",
+            "fontSize": 18,
+            "offset": 24,
         },
         "encoding": {
             "color": {
@@ -102,11 +111,14 @@ function getSpecChart() {
             "x2": {
                 "field": "end_offs",
                 "timeUnit": "hoursminutes",
-            }
+            },
+            "y": {"value": 10},
+            "y2": {"value": 55}
         },
         "mark": {
             "type": "rect",
-            "cornerRadius": 4
+            "cornerRadius": 4,
+            "opacity": .9
         },
         "transform": [
             {
@@ -125,4 +137,104 @@ function getSpecChart() {
         "width": 600,
         "height": 64
     }
+    return {...baseSpec, ...spec}
+}
+
+
+export function getSpecChartPercentages() {
+    const spec = {
+        "title": {
+            "text": "Totaalpercentages per slaapstatus",
+            "fontSize": 18,
+            "offset": 24,
+            "anchor": "start",
+        },
+        "transform": [
+            {
+                "filter": "datum.category !== 'Uit bed'"
+            },
+            {
+                "aggregate": [{
+                    "op": "sum",
+                    "field": "duration",
+                    "as": "duration"
+                }],
+                "groupby": [
+                    "category"
+                ]
+            },
+            {
+                "joinaggregate": [{
+                    "op": "sum",
+                    "field": "duration",
+                    "as": "totalDuration"
+                }],
+            },
+            {
+                "calculate": "datum.duration/datum.totalDuration",
+                "as": "percentage"
+            },
+            {
+                "calculate": "datum.category + ' (' + format(datum.percentage, '.0%') + ')'",
+                "as": "percentageFormatted"
+            },
+        ],
+        "encoding": {
+            "theta": {
+                "field": "percentage",
+                "type": "quantitative",
+                "stack": true
+            },
+            "color": {
+                "field": "category",
+                "scale": {
+                    "domain": [
+                        "Inslapen",
+                        "Slapen",
+                        "Wakker",
+                        "Waken",
+                        "Uit bed"
+                    ],
+                    "range": [
+                        "#4c78a8",
+                        "#54a24b",
+                        "#e45756",
+                        "#eeca3b",
+                        "#ff9da6"
+                    ]
+                },
+                "type": "nominal",
+                "legend": null
+            },
+            "order": {
+                "field": "percentage",
+                "type": "quantitative",
+                "sort": "descending"
+            }
+        },
+        "layer": [
+            {
+                "mark": {
+                    "type": "arc",
+                    "innerRadius": 80,
+                    "outerRadius": 160,
+                    // "tooltip": true
+                },
+            },
+            {
+                "mark": {
+                    "type": "text",
+                    "radius": 200
+                },
+                "encoding": {
+                    "text": {
+                        "field": "percentageFormatted",
+                        "type": "nominal"
+                    }
+                }
+            }
+        ],
+        "width": 600,
+    }
+    return {...baseSpec, ...spec}
 }

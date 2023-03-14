@@ -4,47 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SLAAPANALYSE</title>
+    <title>Slaapanalyse</title>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.6.1"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <link rel="stylesheet" href="static/stylesheet.css">
     <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Georgia, Cambria, 'Times New Roman', Times, serif;
-            line-height: 1.8;
-            max-width: 900px;
-            min-height: 100vh;
-            margin: 0 auto;
-            padding: 2rem 1.25rem;
-        }
-        main {
-            display: grid;
-            gap: 1rem;
-        }
-        table {
-            border-collapse: collapse;
-        }
-        thead {
-            border-bottom: 1px solid black;
-        }
-        th {
-            text-align: left;
-        }
-        th, td {
-            padding: .25rem .5rem;
-        }
-        #table td {
-            text-align: right;
-        }
-        .issue {
-            background-color: darkred;
-            color: whitesmoke;
-        }
     </style>
 </head>
 <body>
@@ -90,31 +55,71 @@
             </table>
         </section>
         <section>
-            <input type="file" id="fileInput">
-            <div id="fileContent"></div>
+            <h2>Laad data</h2>
+            <div class="inputs">
+                <label for="fileInput">Selecteer een csv bestand:</label>
+                <input type="file" id="fileInput">
+                <label for="loadExample">Of laad een voorbeeldbestand:</label>
+                <button id="loadExample">Laad voorbeeld</button>
+            </div>
         </section>
-        <h2>Gegevens</h2>
-        <div id="metadata"></div>
-        <h2>Tabel</h2>
-        <div id="table"></div>
-        <h2>Grafiek</h2>
-        <div id="graph"></div>
+        <section>
+            <h2>Gegevens</h2>
+            <div id="metadata"></div>
+        </section>
+        <section>
+            <h2>Tabel</h2>
+            <div id="table"></div>
+        </section>
+        <section>
+            <h2>Grafieken</h2>
+            <div id="graph-timelines"></div>
+        </section>
+        <section>
+            <div id="graph-percentages"></div>
+        </section>
+        <section>
+            <h2>Overige informatie</h2>
+            <p>Deze tool is ontwikkeld door:</p>
+            <ul>
+                <li>L.P.H. Vriend</li>
+                <li>L.C. Vriend</li>
+            </ul>
+            <p>De code is open source beschikbaar; zie <a href="https://github.com/lcvriend/sleepanalysis">github.com/lcvriend/sleepanalysis</a>.</p>
+            <p>De grafieken zijn gemaakt met <a href="https://vega.github.io/vega-lite/">Vega-Lite</a>.</p>
+        </section>
     </main>
 <script type="module">
     import { analyzeSleepPatterns } from "./src/sleepanalysis.js"
-
+    const loadExample = document.getElementById("loadExample")
     const fileInput = document.getElementById("fileInput")
-    const fileContent = document.getElementById("fileContent")
+    const elementIds = {
+        timelines: "#graph-timelines",
+        percentages: "#graph-percentages",
+        table: "#table",
+        metadata: "#metadata",
+    }
 
-    fileInput.addEventListener("change", (event) => {
+    fileInput.addEventListener("change", event => {
         const file = event.target.files[0]
         const reader = new FileReader()
-
         reader.readAsText(file)
-
         reader.onload = (event) => {
-            analyzeSleepPatterns(event, {chart: "#graph", table: "#table", metadata: "#metadata"})
+            const source = event.target.result
+            analyzeSleepPatterns(source, elementIds)
         }
     })
+
+    loadExample.addEventListener("click", () => {
+        fetch("data/example.csv")
+            .then(response => response.text())
+            .then(data => {
+                analyzeSleepPatterns(data, elementIds)
+            })
+            .catch(error => {
+                console.error("Error:", error)
+            })
+    })
+
 </script>
 </body>
