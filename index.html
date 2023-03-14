@@ -90,6 +90,8 @@
             <input type="file" id="fileInput">
             <div id="fileContent"></div>
         </section>
+        <h2>Gegevens</h2>
+        <div id="metadata"></div>
         <h2>Tabel</h2>
         <div id="table"></div>
         <h2>Grafiek</h2>
@@ -108,7 +110,7 @@
         reader.readAsText(file)
 
         reader.onload = (event) => {
-            analyzeSleepPatterns(event, "#graph", "#table")
+            analyzeSleepPatterns(event, {chart: "#graph", table: "#table", metadata: "#metadata"})
         }
     })
 </script>

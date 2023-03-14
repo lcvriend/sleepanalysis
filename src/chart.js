@@ -1,6 +1,9 @@
 export function renderChart(chartId, data) {
     const spec = getSpecChart()
     spec.data.values = data.values
+    console.log("......")
+    console.log(data.values)
+    console.log(chartId)
     vegaEmbed(chartId, spec)
         .then(result => {})
         .catch(error => console.log(error))

@@ -1,13 +1,15 @@
 import { Data } from "./data.js"
 import { renderChart } from "./chart.js"
 import { renderTable } from "./table.js"
+import { renderMetaData } from "./metadata.js"
 
 
-export function analyzeSleepPatterns(event, chartId, tableId) {
+export function analyzeSleepPatterns(event, elementIds) {
     const data = Data.fromCSV(event.target.result)
     console.table(data.values)
-    renderChart(chartId, data)
-    renderTable(tableId, data, norms)
+    renderChart(elementIds.chart, data)
+    renderTable(elementIds.table, data)
+    renderMetaData(elementIds.metadata, data)
 }
 
 
