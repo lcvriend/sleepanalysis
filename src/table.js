@@ -1,64 +1,39 @@
-import { getAverage, getMode } from "./data.js"
+import { analysis, getAverage, getMode } from "./stats.js"
 import { norms } from "./sleepanalysis.js"
-
-
-function testNorm(value, normName) {
-    const {op, threshold} = norms[normName]
-    const operation = {
-        "<": value => value < threshold,
-        "<=": value => value <= threshold,
-        ">": value => value > threshold,
-        ">=": value => value >= threshold,
-        "===": value => value === threshold,
-    }
-    return operation[op](value)
-}
-
-
-function getIndicator(data, options) {
-    const value = options.func(data, options)
-    const passesNorm = options.normName ? testNorm(value, options.normName) : true
-    return {
-        value: value,
-        formatted: options.formatter ? options.formatter(value) : value,
-        class: passesNorm ? "" : ' class="issue"',
-    }
-}
-
 
 export function renderTable(tableId, data) {
     const tableSpecification = {}
     for (const [key, group] of Object.entries(data.grouped)) {
         tableSpecification[key] = {
             timeToSleep: getIndicator(group, {
-                func: getTotalTimeOfCategory,
+                func: analysis.getTotalTimeOfCategory,
                 formatter: formatTime,
                 category: "Inslapen",
                 normName: "timeToSleep"
             }),
             timeToWake: getIndicator(group, {
-                func: getTotalTimeOfCategory,
+                func: analysis.getTotalTimeOfCategory,
                 formatter: formatTime,
                 category: "Waken",
             }),
             totalTimeInBed: getIndicator(group, {
-                func: getTotalTimeInBed,
+                func: analysis.getTotalTimeInBed,
                 formatter: formatTime,
             }),
             totalSleep: getIndicator(group, {
-                func: getTotalTimeOfCategory,
+                func: analysis.getTotalTimeOfCategory,
                 formatter: formatTime,
                 category: "Slapen",
                 normName: "totalSleep"
             }),
             totalAwake: getIndicator(group, {
-                func: getTotalTimeOfCategory,
+                func: analysis.getTotalTimeOfCategory,
                 formatter: formatTime,
                 category: "Wakker",
                 normName: "totalAwake"
             }),
             countsAwake: getIndicator(group, {
-                func: getCategoryCounts,
+                func: analysis.getCategoryCounts,
                 category: "Wakker",
                 normName: "countsAwake"
             })
@@ -71,7 +46,7 @@ export function renderTable(tableId, data) {
             totalSleep: group.totalSleep.value
         }
         const options = {
-            func: getSleepEfficiency,
+            func: analysis.getSleepEfficiency,
             formatter: formatPercentage,
             normName: "sleepEfficiency"
         }
@@ -147,31 +122,27 @@ export function renderTable(tableId, data) {
     </table>`
 }
 
-
-function getSleepEfficiency(data) {
-    const { totalTimeInBed, totalSleep} = data
-    return totalSleep / totalTimeInBed
+function getIndicator(data, options) {
+    const value = options.func(data, options)
+    const passesNorm = options.normName ? testNorm(value, options.normName) : true
+    return {
+        value: value,
+        formatted: options.formatter ? options.formatter(value) : value,
+        class: passesNorm ? "" : ' class="issue"',
+    }
 }
 
-
-function getCategoryCounts(data, options) {
-    return data.filter(item => item.category === options.category ).length
+function testNorm(value, normName) {
+    const {op, threshold} = norms[normName]
+    const operation = {
+        "<": value => value < threshold,
+        "<=": value => value <= threshold,
+        ">": value => value > threshold,
+        ">=": value => value >= threshold,
+        "===": value => value === threshold,
+    }
+    return operation[op](value)
 }
-
-
-function getTotalTimeOfCategory(data, options) {
-    const selected = data.filter(item => item.category === options.category)
-    if (selected.length === 0) { return 0 }
-    return selected
-        .map(({ duration }) => duration)
-        .reduce((x, y) => x + y)
-}
-
-
-function getTotalTimeInBed(data) {
-    return data.at(-2).timestamp - data.at(0).timestamp
-}
-
 
 function formatTime(milliseconds) {
     if (!milliseconds) { return "" }
@@ -182,7 +153,6 @@ function formatTime(milliseconds) {
     const seconds = totalSeconds - (hours * 3600) - (minutes * 60)
     return `${stringify(hours)}:${stringify(minutes)}:${stringify(seconds)}`
 }
-
 
 function formatPercentage(percentage) {
     return percentage
