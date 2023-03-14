@@ -1,2 +1,5 @@
 oude_versies
+!data/example.csv
 *.xlsx
+*.csv
+*.ipynb
