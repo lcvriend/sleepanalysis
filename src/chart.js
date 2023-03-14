@@ -224,7 +224,8 @@ export function getSpecChartPercentages() {
             {
                 "mark": {
                     "type": "text",
-                    "radius": 200
+                    "radius": 210,
+                    "fontSize": 14
                 },
                 "encoding": {
                     "text": {
