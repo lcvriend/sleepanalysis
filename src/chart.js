@@ -1,9 +1,6 @@
 export function renderChart(chartId, data) {
     const spec = getSpecChart()
     spec.data.values = data.values
-    console.log("......")
-    console.log(data.values)
-    console.log(chartId)
     vegaEmbed(chartId, spec)
         .then(result => {})
         .catch(error => console.log(error))
@@ -17,6 +14,21 @@ function getSpecChart() {
             "view": {
                 "continuousHeight": 300,
                 "continuousWidth": 300
+            },
+            "font": "Georgia",
+            "header": {
+                "titleFontSize": 16,
+                "labelFontSize": 14
+            },
+            "axis": {
+                "titleFontSize": 16,
+                "labelFontSize": 14,
+                "labelAngle": 270,
+                "grid": true
+            },
+            "legend": {
+                "titleFontSize": 16,
+                "labelFontSize": 14
             }
         },
         "data": {
