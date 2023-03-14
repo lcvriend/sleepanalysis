@@ -16,7 +16,7 @@ function getTotalTimeOfCategory(data, options) {
 }
 
 function getTotalTimeInBed(data) {
-    return data.at(-2).timestamp - data.at(0).timestamp
+    return data.at(-1).timestamp - data.at(0).timestamp
 }
 
 export const analysis = {
