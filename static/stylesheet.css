@@ -8,19 +8,42 @@ body {
     font-family: Georgia, Cambria, 'Times New Roman', Times, serif;
     line-height: 1.8;
     max-width: 900px;
+    min-width: 400px;
     min-height: 100vh;
     margin: 0 auto;
     padding: 2rem 1.25rem;
 }
+header {
+    position: relative;
+}
+header img {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 148px;
+}
 main {
     display: grid;
-    gap: 1rem;
+    gap: 1.5rem;
 }
+section {
+    overflow-x: hidden;
+}
+
+/* custom elements */
 .inputs {
     display: grid;
     gap: 1rem;
     grid-template-columns: auto 1fr;
     justify-items: start;
+}
+[id^="chart"] + [id^="chart"] {
+    margin-top: 1rem;
+}
+div[id^="chart"], div[id^="table"] {
+    display: block;
+    overflow-x: auto;
+    padding-bottom: 1rem;
 }
 
 /* tables */

@@ -15,6 +15,7 @@
 <body>
     <header>
         <h1>Slaapanalyse</h1>
+        <img src="static/noun-sleep-disorder-5145226.svg" alt="">
     </header>
     <main>
         <section>
@@ -73,10 +74,8 @@
         </section>
         <section>
             <h2>Grafieken</h2>
-            <div id="graph-timelines"></div>
-        </section>
-        <section>
-            <div id="graph-percentages"></div>
+            <div id="chart-timelines"></div>
+            <div id="chart-percentages"></div>
         </section>
         <section>
             <h2>Overige informatie</h2>
@@ -94,8 +93,8 @@
     const loadExample = document.getElementById("loadExample")
     const fileInput = document.getElementById("fileInput")
     const elementIds = {
-        timelines: "#graph-timelines",
-        percentages: "#graph-percentages",
+        timelines: "#chart-timelines",
+        percentages: "#chart-percentages",
         table: "#table",
         metadata: "#metadata",
     }
