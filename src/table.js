@@ -1,44 +1,132 @@
 import { getAverage, getMode } from "./data.js"
+import { norms } from "./sleepanalysis.js"
 
 
-export function renderTable(tableId, data, norms) {
-    const timeToSleep = getPerGroup(data, getTimeOfCategory, {category: "Inslapen"})
-    const timeToWake = getPerGroup(data, getTimeOfCategory, {category: "Waken"})
-    const totalTimeInBed = getPerGroup(data, getTotalTimeInBed)
-    const totalSleep = getPerGroup(data, getTotalTimeOfCategory, {category: "Slapen"})
-    const totalAwake = getPerGroup(data, getTotalTimeOfCategory, {category: "Wakker"})
-    const countsAwake = getPerGroup(data, getCategoryCounts, {category: "Wakker"})
-    const sleepEfficiency = getSleepEfficiencyPerGroup(totalTimeInBed, totalSleep)
+function testNorm(value, normName) {
+    const {op, threshold} = norms[normName]
+    const operation = {
+        "<": value => value < threshold,
+        "<=": value => value <= threshold,
+        ">": value => value > threshold,
+        ">=": value => value >= threshold,
+        "===": value => value === threshold,
+    }
+    return operation[op](value)
+}
 
-    const tableSpec = []
-    for (const key of Object.keys(timeToSleep)) {
-        tableSpec.push(`<tr>
-            <th>${key}</th>
-            <td ${timeToSleep[key] < norms.timeToSleep ? "" : 'class="issue"'}>${formatTime(timeToSleep[key])}</td>
-            <td>${formatTime(timeToWake[key])}</td>
-            <td>${formatTime(totalTimeInBed[key])}</td>
-            <td ${totalSleep[key] > norms.sleepDuration ? "" : 'class="issue"'}>${formatTime(totalSleep[key])}</td>
-            <td ${totalAwake[key] < norms.timeAwake ? "" : 'class="issue"'}>${formatTime(totalAwake[key])}</td>
-            <td ${countsAwake[key] < norms.countsAwake ? "" : 'class="issue"'}>${countsAwake[key]}</td>
-            <td ${sleepEfficiency[key] > norms.sleepEfficiency ? "" : 'class="issue"'}>${formatPercentage(sleepEfficiency[key])}</td>
-        </tr>`)
+
+function getIndicator(data, options) {
+    const value = options.func(data, options)
+    const passesNorm = options.normName ? testNorm(value, options.normName) : true
+    return {
+        value: value,
+        formatted: options.formatter ? options.formatter(value) : value,
+        class: passesNorm ? "" : ' class="issue"',
+    }
+}
+
+
+export function renderTable(tableId, data) {
+    const tableSpecification = {}
+    for (const [key, group] of Object.entries(data.grouped)) {
+        tableSpecification[key] = {
+            timeToSleep: getIndicator(group, {
+                func: getTotalTimeOfCategory,
+                formatter: formatTime,
+                category: "Inslapen",
+                normName: "timeToSleep"
+            }),
+            timeToWake: getIndicator(group, {
+                func: getTotalTimeOfCategory,
+                formatter: formatTime,
+                category: "Waken",
+            }),
+            totalTimeInBed: getIndicator(group, {
+                func: getTotalTimeInBed,
+                formatter: formatTime,
+            }),
+            totalSleep: getIndicator(group, {
+                func: getTotalTimeOfCategory,
+                formatter: formatTime,
+                category: "Slapen",
+                normName: "totalSleep"
+            }),
+            totalAwake: getIndicator(group, {
+                func: getTotalTimeOfCategory,
+                formatter: formatTime,
+                category: "Wakker",
+                normName: "totalAwake"
+            }),
+            countsAwake: getIndicator(group, {
+                func: getCategoryCounts,
+                category: "Wakker",
+                normName: "countsAwake"
+            })
+        }
     }
 
-    const avgTimeToSleep = getAverage(Object.values(timeToSleep))
-    const avgTotalSleep = getAverage(Object.values(totalSleep))
-    const avgTotalAwake = getAverage(Object.values(totalAwake))
-    const modeCountsAwake = getMode(Object.values(countsAwake))
-    const avgSleepEfficiency = getAverage(Object.values(sleepEfficiency))
-    tableSpec.push(`<tr>
-        <th>Gem.</th>
-        <td ${avgTimeToSleep < norms.timeToSleep ? "" : 'class="issue"'}>${formatTime(avgTimeToSleep)}</td>
-        <td>${formatTime(getAverage(Object.values(timeToWake)))}</td>
-        <td>${formatTime(getAverage(Object.values(totalTimeInBed)))}</td>
-        <td ${avgTotalSleep > norms.sleepDuration ? "" : 'class="issue"'}>${formatTime(avgTotalSleep)}</td>
-        <td ${avgTotalAwake < norms.timeAwake ? "" : 'class="issue"'}>${formatTime(avgTotalAwake)}</td>
-        <td ${modeCountsAwake < norms.countsAwake ? "" : 'class="issue"'}>${modeCountsAwake}</td>
-        <td ${avgSleepEfficiency > norms.sleepEfficiency ? "" : 'class="issue"'}>${formatPercentage(avgSleepEfficiency)}</td>
-    </tr>`)
+    for (const [key, group] of Object.entries(tableSpecification)) {
+        const data = {
+            totalTimeInBed: group.totalTimeInBed.value,
+            totalSleep: group.totalSleep.value
+        }
+        const options = {
+            func: getSleepEfficiency,
+            formatter: formatPercentage,
+            normName: "sleepEfficiency"
+        }
+        tableSpecification[key].sleepEfficiency = getIndicator(data, options)
+    }
+
+    const getValues = indicator => Object.values(tableSpecification).map(item => item[indicator].value)
+    tableSpecification["Gem."] = {
+        timeToSleep: getIndicator(getValues("timeToSleep"), {
+            func: getAverage,
+            formatter: formatTime,
+            category: "Inslapen",
+            normName: "timeToSleep"
+        }),
+        timeToWake: getIndicator(getValues("timeToWake"), {
+            func: getAverage,
+            formatter: formatTime,
+            category: "Waken",
+        }),
+        totalTimeInBed: getIndicator(getValues("totalTimeInBed"), {
+            func: getAverage,
+            formatter: formatTime,
+        }),
+        totalSleep: getIndicator(getValues("totalSleep"), {
+            func: getAverage,
+            formatter: formatTime,
+            category: "Slapen",
+            normName: "totalSleep"
+        }),
+        totalAwake: getIndicator(getValues("totalAwake"), {
+            func: getAverage,
+            formatter: formatTime,
+            category: "Wakker",
+            normName: "totalAwake"
+        }),
+        countsAwake: getIndicator(getValues("countsAwake"), {
+            func: getMode,
+            category: "Wakker",
+            normName: "countsAwake"
+        }),
+        sleepEfficiency: getIndicator(getValues("sleepEfficiency"), {
+            func: getAverage,
+            formatter: formatPercentage,
+            normName: "sleepEfficiency"
+        }),
+    }
+
+    const tableHTMLElements = []
+    for (const [key, spec] of Object.entries(tableSpecification)) {
+        const rowHTMLElements = [`<th>${key}</th>`]
+        for (const item of Object.values(spec)) {
+            rowHTMLElements.push(`<td${item.class}>${item.formatted}</td>`)
+        }
+        tableHTMLElements.push(`<tr>${rowHTMLElements.join("")}</tr>`)
+    }
 
     document.querySelector(tableId).innerHTML = `<table>
         <thead>
@@ -54,27 +142,15 @@ export function renderTable(tableId, data, norms) {
             </tr>
         </thead>
         <tbody>
-        ${tableSpec.join("")}
+        ${tableHTMLElements.join("")}
         </tbody>
     </table>`
 }
 
 
-function getPerGroup(data, func, options={}) {
-    const perGroup = {}
-    for (const [key, group] of Object.entries(data.groups)) {
-        perGroup[key] = func(group, options)
-    }
-    return perGroup
-}
-
-
-function getSleepEfficiencyPerGroup(totalTimeInBed, totalSleep) {
-    const result = {}
-    Object.keys(totalTimeInBed).forEach(key => {
-        result[key] = totalSleep[key] / totalTimeInBed[key]
-    })
-    return result
+function getSleepEfficiency(data) {
+    const { totalTimeInBed, totalSleep} = data
+    return totalSleep / totalTimeInBed
 }
 
 
@@ -94,14 +170,6 @@ function getTotalTimeOfCategory(data, options) {
 
 function getTotalTimeInBed(data) {
     return data.at(-2).timestamp - data.at(0).timestamp
-}
-
-
-function getTimeOfCategory(data, options) {
-    for (const item of data) {
-        if (item.category === options.category) { return item.duration }
-    }
-    return 0
 }
 
 

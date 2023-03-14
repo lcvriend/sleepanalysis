@@ -4,11 +4,11 @@ import { renderTable } from "./table.js"
 
 
 export const norms = {
-    sleepDuration: 7 * 60 * 60 * 1000,
-    timeToSleep: 30 * 60 * 1000,
-    timeAwake: 90 * 60 * 1000,
-    sleepEfficiency: .85,
-    countsAwake: 2,
+    totalSleep: {"op": ">", "threshold": 7 * 60 * 60 * 1000},
+    timeToSleep: {"op": "<", "threshold": 30 * 60 * 1000},
+    totalAwake: {"op": "<", "threshold": 90 * 60 * 1000},
+    sleepEfficiency: {"op": ">", "threshold": .85},
+    countsAwake: {"op": "<=", "threshold": 2},
 }
 
 
@@ -24,7 +24,7 @@ class Data {
     constructor(values, headers) {
         this.headers = headers
         this.values = values
-        this.groups = groupby(values)
+        this.grouped = groupby(values)
     }
 
     static fromCSV(csv) {
