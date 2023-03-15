@@ -30,7 +30,6 @@ export class Data {
     }
 }
 
-
 function addNextTimestamp(data) {
     data.forEach((item, index) => {
         const nextItem = data[index + 1]
@@ -40,16 +39,17 @@ function addNextTimestamp(data) {
     })
 }
 
-
 function addDurationInMs(data) {
     data.forEach(item => {
         item.duration = item.timestamp2 - item.timestamp
     })
 }
 
-
 function parseCSV(csv) {
-    let [colnames, ...values] = csv.trim().split("\n").map(row => row.split(";").map(i => i.trim()))
+    let [colnames, ...values] = csv
+        .trim()
+        .split("\n")
+        .map(row => row.split(";").map(i => i.trim()))
     values = values.map(row => {
         return row.reduce((obj, val, idx) => {
             obj[colnames[idx]] = val
@@ -58,7 +58,6 @@ function parseCSV(csv) {
     })
     return {colnames, values}
 }
-
 
 function groupby(data) {
     const groups = data.reduce((acc, current) => {
@@ -71,7 +70,6 @@ function groupby(data) {
         }, {})
     return groups
 }
-
 
 function ungroup(groups) {
     const ungrouped = []
