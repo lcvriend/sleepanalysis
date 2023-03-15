@@ -26,7 +26,7 @@ export class Data {
     static getTimestampFromDateAndTime(row, headers) {
         const {[headers.datestr]: date, [headers.timestr]: time} = row
         const datestr = `${date.slice(0,4)}-${date.slice(4,6)}-${date.slice(6)}`
-        return Date.parse(`${datestr} ${time}`)
+        return Date.parse(`${datestr}T${time}`)
     }
 }
 
