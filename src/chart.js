@@ -118,7 +118,7 @@ export function getSpecChartTimelines() {
         "mark": {
             "type": "rect",
             "cornerRadius": 4,
-            "opacity": .9
+            // "opacity": .9
         },
         "transform": [
             {
