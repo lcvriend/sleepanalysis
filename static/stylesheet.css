@@ -14,16 +14,18 @@ body {
     padding: 2rem 1.25rem;
 }
 header {
-    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    /* position: relative; */
 }
 header h1 {
+    margin-top: 0;
     font-size: 3rem;
 }
 header img {
-    position: absolute;
-    right: 108px;
-    top: 0;
-    width: 148px;
+    margin-bottom: 0;
+    width: 80px;
 }
 main {
     display: grid;
@@ -34,7 +36,7 @@ section {
 }
 
 /* custom elements */
-.inputs {
+.controls {
     display: grid;
     gap: 1rem;
     grid-template-columns: auto 1fr;
@@ -74,7 +76,17 @@ th, td {
 }
 
 /* utility */
+.hide {
+    display: none;
+}
 .issue {
     background-color: darkred;
     color: whitesmoke;
 }
+
+/* printing */
+@media print {
+    .input {
+            display: none !important;
+        }
+    }

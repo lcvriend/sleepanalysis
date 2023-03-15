@@ -55,24 +55,24 @@
                 </tbody>
             </table>
         </section>
-        <section>
+        <section class="input">
             <h2>Laad data</h2>
-            <div class="inputs">
+            <div class="controls">
                 <label for="fileInput">Selecteer een csv bestand:</label>
                 <input type="file" id="fileInput">
                 <label for="loadExample">Of laad een voorbeeldbestand:</label>
                 <button id="loadExample">Laad voorbeeld</button>
             </div>
         </section>
-        <section>
+        <section class="output hide">
             <h2>Gegevens</h2>
             <div id="metadata"></div>
         </section>
-        <section>
+        <section class="output hide">
             <h2>Tabel</h2>
             <div id="table"></div>
         </section>
-        <section>
+        <section class="output hide">
             <h2>Grafieken</h2>
             <div id="chart-timelines"></div>
             <div id="chart-percentages"></div>
@@ -92,6 +92,7 @@
     import { analyzeSleepPatterns } from "./src/sleepanalysis.js"
     const loadExample = document.getElementById("loadExample")
     const fileInput = document.getElementById("fileInput")
+    const outputSections = document.querySelectorAll(".output")
     const elementIds = {
         timelines: "#chart-timelines",
         percentages: "#chart-percentages",
@@ -106,6 +107,7 @@
         reader.onload = (event) => {
             const source = event.target.result
             analyzeSleepPatterns(source, elementIds)
+            showOutputSections()
         }
     })
 
@@ -114,11 +116,16 @@
             .then(response => response.text())
             .then(data => {
                 analyzeSleepPatterns(data, elementIds)
+                showOutputSections()
             })
             .catch(error => {
                 console.error("Error:", error)
             })
     })
+
+    function showOutputSections() {
+        outputSections.forEach(section => section.classList.remove("hide"))
+    }
 
 </script>
 </body>
