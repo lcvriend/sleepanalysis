@@ -225,20 +225,33 @@ export function getSpecChartPercentages() {
                 "field": "percentage",
                 "type": "quantitative",
                 "sort": "descending"
-            }
+            },
+            "tooltip": [
+                {
+                    "field": "category",
+                    "type": "nominal",
+                    "title": "Status"
+                },
+                {
+                    "field": "percentage",
+                    "type": "nominal",
+                    "format": ".0%",
+                    "title": "Percentage"
+                },
+            ]
         },
         "layer": [
             {
                 "mark": {
                     "type": "arc",
                     "innerRadius": 90,
-                    "outerRadius": 180,
-                    // "tooltip": true
+                    "outerRadius": 180
                 },
             },
             {
                 "mark": {
                     "type": "text",
+                    "fill": "black",
                     "radius": 210,
                     "fontSize": 14
                 },
