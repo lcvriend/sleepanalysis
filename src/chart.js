@@ -43,7 +43,7 @@ export function getSpecChartTimelines() {
             "text": "Tijdlijnen per sessie",
             "subtitle": [
                 "Mouseover om details te zien bij de observaties.",
-                "Klik op label in legende om status uit te lichten."
+                "(Shift-)klik op label(s) in legende om status(sen) uit te lichten."
             ],
             "fontSize": 18,
             "offset": 24,
