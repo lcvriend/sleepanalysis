@@ -17,7 +17,6 @@ header {
     display: flex;
     flex-direction: column-reverse;
     align-items: center;
-    /* position: relative; */
 }
 header h1 {
     margin-top: 0;
@@ -34,14 +33,24 @@ main {
 }
 section {
     overflow-x: hidden;
+    padding: .5rem 1rem;
 }
 
 /* custom elements */
 .controls {
     display: grid;
     gap: 1rem;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 1fr 1fr;
     justify-items: start;
+}
+.instructions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .5rem;
+    padding: .5rem;
+}
+#loadExample {
+    display: block;
 }
 [id^="chart"] + [id^="chart"] {
     margin-top: 1rem;
@@ -76,6 +85,25 @@ th, td {
     border: none;
 }
 
+/* styling */
+section h2 {
+    margin-top: 0;
+}
+section h2 span {
+    font-style: italic;
+    font-size: .8rem;
+    font-weight: 400;
+}
+details[open], details[open] summary {
+    border-bottom: 1px solid black;
+}
+details:hover {
+    cursor: pointer;
+}
+ol, ul {
+    padding-left: 1rem;
+}
+
 /* utility */
 .hide {
     display: none;
@@ -86,8 +114,16 @@ th, td {
 }
 
 /* printing */
+.no-print {
+    background-color: hsl(214, 41%, 94%);
+    border-radius: .5em;
+}
+
 @media print {
-    .input {
-            display: none !important;
-        }
+    .no-print {
+        display: none !important;
     }
+    [id^="chart"] {
+        page-break-after: always;
+    }
+}

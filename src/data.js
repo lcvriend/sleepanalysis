@@ -5,7 +5,19 @@ export class Data {
         this.grouped = groupby(values)
     }
 
-    static fromCSV(csv) {
+    static fromCSV(csv, onError) {
+        try {
+            const data = this._fromCSV(csv)
+            return data
+        } catch (error) {
+            if (onError) {
+                onError(error)
+            }
+            throw error
+        }
+    }
+
+    static _fromCSV(csv) {
         let {colnames, values} = parseCSV(csv)
         const [key, datestr, timestr, category] = colnames
         const headers = {key, datestr, timestr, category}
@@ -62,12 +74,10 @@ function parseCSV(csv) {
 function groupby(data) {
     const groups = data.reduce((acc, current) => {
         const {key: key, ...newObj} = current
-        if (!acc[key]) {
-            acc[key] = []
-        }
+        if (!acc[key]) { acc[key] = [] }
         acc[key].push(newObj)
         return acc
-        }, {})
+    }, {})
     return groups
 }
 
@@ -78,4 +88,11 @@ function ungroup(groups) {
         ungrouped.push(...group)
     }
     return ungrouped
+}
+
+class ParseError extends Error {
+    constructor(message) {
+        super(message)
+        this.name = "ParseError"
+    }
 }

@@ -1,19 +1,20 @@
+let views = {}
+
+
 export function renderChart(chartId, specGetter, data) {
     const spec = specGetter()
     spec.data.values = data.values
     vegaEmbed(chartId, spec)
-        .then(result => {})
+        .then(result => {
+            views[chartId] = result.view
+        })
         .catch(error => console.log(error))
 }
 
 
 const baseSpec = {
-    "$schema": "https://vega.github.io/schema/vega-lite/v5.6.1.json",
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.9.0.json",
     "config": {
-        "view": {
-            "continuousHeight": 300,
-            "continuousWidth": 300
-        },
         "font": "Georgia",
         "header": {
             "titleFontSize": 16,
@@ -39,10 +40,19 @@ const baseSpec = {
 export function getSpecChartTimelines() {
     const spec = {
         "title": {
-            "text": "Tijdlijnen bij geobserveerde slaappatronen",
+            "text": "Tijdlijnen per sessie",
+            "subtitle": [
+                "Mouseover om details te zien bij de observaties.",
+                "Klik op label in legende om status uit te lichten."
+            ],
             "fontSize": 18,
             "offset": 24,
         },
+        "params": [{
+            "name": "category",
+            "select": {"type": "point", "fields": ["category"]},
+            "bind": "legend"
+          }],
         "encoding": {
             "color": {
                 "field": "category",
@@ -62,7 +72,12 @@ export function getSpecChartTimelines() {
                         "#ff9da6"
                     ]
                 },
-                "type": "nominal"
+                "type": "nominal",
+                "title": "Categorie"
+            },
+            "opacity": {
+                "condition": {"param": "category", "value": 1},
+                "value": 0.2
             },
             "row": {
                 "field": "key",
@@ -175,7 +190,7 @@ export function getSpecChartPercentages() {
                 "as": "percentage"
             },
             {
-                "calculate": "datum.category + ' (' + format(datum.percentage, '.0%') + ')'",
+                "calculate": "format(datum.percentage, '.0%')",
                 "as": "percentageFormatted"
             },
         ],
@@ -204,7 +219,7 @@ export function getSpecChartPercentages() {
                     ]
                 },
                 "type": "nominal",
-                "legend": null
+                "title": "Categorie"
             },
             "order": {
                 "field": "percentage",
@@ -216,8 +231,8 @@ export function getSpecChartPercentages() {
             {
                 "mark": {
                     "type": "arc",
-                    "innerRadius": 80,
-                    "outerRadius": 160,
+                    "innerRadius": 90,
+                    "outerRadius": 180,
                     // "tooltip": true
                 },
             },
@@ -235,7 +250,11 @@ export function getSpecChartPercentages() {
                 }
             }
         ],
-        "width": 600,
+        "width": 400,
+        "height": 400
     }
     return {...baseSpec, ...spec}
 }
+
+
+export { views }

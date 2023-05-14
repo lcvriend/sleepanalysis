@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Slaapanalyse</title>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.6.1"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.9.0"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
     <link rel="stylesheet" href="static/stylesheet.css">
     <style>
@@ -18,8 +18,53 @@
         <img src="static/noun-sleep-disorder-5145226.svg" alt="">
     </header>
     <main>
+        <section class="no-print">
+            <h2>Laad data <span>(Dit gedeelte wordt niet geprint/geëxporteerd)</span></h2>
+            <details>
+                <summary>Bekijk instructies</summary>
+                <div class="instructions">
+                    <div>
+                        <p>Sla observaties op als <a href="https://nl.wikipedia.org/wiki/Kommagescheiden_bestand">csv-bestand</a>.</p>
+                        <p>Deze velden zijn verplicht:</p>
+                        <ol>
+                            <li>Sessie</li>
+                            <li>Datum (<code>YYYYMMDD</code>)</li>
+                            <li>Tijd (<code>HH:MM:SS</code>)</li>
+                            <li>Status</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <p>Gebruik de volgende statussen:</p>
+                        <ul>
+                            <li>Inslapen</li>
+                            <li>Slapen</li>
+                            <li>Wakker</li>
+                            <li>Waken</li>
+                            <li>Uit bed</li>
+                        </ul>
+                        <p>
+                            Zie <a href="https://github.com/lcvriend/sleepanalysis/blob/master/data/example.csv">een voorbeeld.</a>
+                        </p>
+                    </div>
+                </div>
+            </details>
+            <div class="controls">
+                <div class="loader-file">
+                    <label for="fileInput">Selecteer een csv bestand:</label>
+                    <input type="file" id="fileInput" autocomplete="off">
+                </div>
+                <div class="loader-example">
+                    <label for="loadExample">Of laad een voorbeeldbestand:</label>
+                    <button id="loadExample">Laad voorbeeld</button>
+                </div>
+            </div>
+            <div id="errorMessage" class="issue"></div>
+        </section>
         <section>
             <h2>Toelichting</h2>
+            <p>
+                Een slaapanalyse is een methode binnen de orthopedagogiek om slaapproblemen in kaart te brengen. Hierbij wordt gedurende een aantal nachten het slaappatroon geobserveerd en geregistreerd. In deze slaapanalyse wordt het slaappatroon geanalyseerd op basis van de volgende indicatoren:
+            </p>
             <table>
                 <thead>
                     <tr>
@@ -55,21 +100,15 @@
                 </tbody>
             </table>
         </section>
-        <section class="input">
-            <h2>Laad data</h2>
-            <div class="controls">
-                <label for="fileInput">Selecteer een csv bestand:</label>
-                <input type="file" id="fileInput">
-                <label for="loadExample">Of laad een voorbeeldbestand:</label>
-                <button id="loadExample">Laad voorbeeld</button>
-            </div>
-        </section>
         <section class="output hide">
             <h2>Gegevens</h2>
             <div id="metadata"></div>
         </section>
         <section class="output hide">
             <h2>Tabel</h2>
+            <p>
+                Onderstaande tabel bevat de slaapkwantificatie per sessie en gemiddeld voor de gehele observatieduur. Indien een variabele rood is gemarkeerd betekent dit dat de gestelde norm voor een gezond slaappatroon is overschreden.
+            </p>
             <div id="table"></div>
         </section>
         <section class="output hide">
@@ -90,9 +129,13 @@
     </main>
 <script type="module">
     import { analyzeSleepPatterns } from "./src/sleepanalysis.js"
+    import { Data } from "./src/data.js"
+    import { views } from "./src/chart.js"
+
     const loadExample = document.getElementById("loadExample")
     const fileInput = document.getElementById("fileInput")
     const outputSections = document.querySelectorAll(".output")
+    const errorMessage = document.getElementById("errorMessage")
     const elementIds = {
         timelines: "#chart-timelines",
         percentages: "#chart-percentages",
@@ -106,7 +149,8 @@
         reader.readAsText(file)
         reader.onload = (event) => {
             const source = event.target.result
-            analyzeSleepPatterns(source, elementIds)
+            const data = Data.fromCSV(source, handleError)
+            analyzeSleepPatterns(data, elementIds)
             showOutputSections()
         }
     })
@@ -114,7 +158,8 @@
     loadExample.addEventListener("click", () => {
         fetch("data/example.csv")
             .then(response => response.text())
-            .then(data => {
+            .then(source => {
+                const data = Data.fromCSV(source, handleError)
                 analyzeSleepPatterns(data, elementIds)
                 showOutputSections()
             })
@@ -124,7 +169,14 @@
     })
 
     function showOutputSections() {
+        errorMessage.innerHTML = ""
         outputSections.forEach(section => section.classList.remove("hide"))
+        outputSections[0].scrollIntoView({ behavior: "smooth" })
+    }
+
+    function handleError(error) {
+        console.error("Error:", error)
+        errorMessage.innerHTML = "<em>Foutmelding</em> er is iets mis met het csv bestand."
     }
 
 </script>

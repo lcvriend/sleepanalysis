@@ -4,8 +4,7 @@ import { renderTable } from "./table.js"
 import { renderMetaData } from "./metadata.js"
 
 
-export function analyzeSleepPatterns(source, elementIds) {
-    const data = Data.fromCSV(source)
+export function analyzeSleepPatterns(data, elementIds) {
     console.table(data.values)
     renderChart(elementIds.timelines, getSpecChartTimelines, data)
     renderChart(elementIds.percentages, getSpecChartPercentages, data)
