@@ -160,6 +160,7 @@ export function getSpecChartPercentages() {
     const spec = {
         "title": {
             "text": "Totaalpercentages per slaapstatus",
+            "subtitle": "Mouseover om categorie en percentages te zien.",
             "fontSize": 18,
             "offset": 24,
             "anchor": "start",
