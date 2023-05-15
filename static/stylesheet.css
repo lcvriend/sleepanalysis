@@ -52,6 +52,12 @@ section {
 #loadExample {
     display: block;
 }
+#errorMessage:not(:empty) {
+    padding: .25rem;
+}
+.loader-example button {
+    margin-block: .25rem;
+}
 [id^="chart"] + [id^="chart"] {
     margin-top: 1rem;
 }
@@ -94,7 +100,7 @@ section h2 span {
     font-size: .8rem;
     font-weight: 400;
 }
-details[open], details[open] summary {
+details, details[open] summary {
     border-bottom: 1px solid black;
 }
 details:hover {
