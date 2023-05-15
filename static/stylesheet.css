@@ -37,7 +37,7 @@ section {
 }
 
 /* custom elements */
-.controls {
+.loaders {
     display: grid;
     gap: 1rem;
     grid-template-columns: 1fr 1fr;
@@ -48,6 +48,12 @@ section {
     grid-template-columns: 1fr 1fr;
     gap: .5rem;
     padding: .5rem;
+}
+.controles details, .controles details[open] summary {
+    border-bottom: 1px solid black;
+}
+.controles details:hover {
+    cursor: pointer;
 }
 #loadExample {
     display: block;
@@ -64,10 +70,12 @@ section {
 [id^="chart"] + [id^="chart"] {
     margin-top: 1rem;
 }
-div[id^="chart"], div[id^="table"] {
-    display: block;
-    overflow-x: auto;
+[id^="chart"], [id^="table"] {
+    width: 100%;
     padding-bottom: 1rem;
+}
+.chart-wrapper {
+    overflow-x: auto;
 }
 
 /* tables */
@@ -85,7 +93,10 @@ th {
 th, td {
     padding: .25rem .5rem;
 }
-#table td {
+[id^="table"] table {
+    width: 100%;
+}
+#table-sleepquantification td {
     text-align: right;
 }
 #vg-tooltip-element.vg-tooltip table {
@@ -102,12 +113,6 @@ section h2 span {
     font-style: italic;
     font-size: .8rem;
     font-weight: 400;
-}
-details, details[open] summary {
-    border-bottom: 1px solid black;
-}
-details:hover {
-    cursor: pointer;
 }
 ol, ul {
     padding-left: 1rem;
@@ -134,5 +139,35 @@ ol, ul {
     }
     [id^="chart"] {
         page-break-after: always;
+    }
+}
+
+@media (max-width: 800px) {
+    [id^="table"] thead {
+        display: none;
+    }
+    [id^="table"] :where(th, td) {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        text-align: left;
+    }
+    #table-sleepquantification td {
+        text-align: left;
+    }
+    [id^="table"] th {
+        margin-top: 2rem;
+    }
+    [id^="table"] td:last-child {
+        margin-bottom: 1rem;
+    }
+    [id^="table"] :where(th, td)::before {
+        content: attr(data-cell);
+        color: black;
+        font-style: normal;
+    }
+    .issue {
+        background-color: white;
+        color: darkred;
+        font-style: italic;
     }
 }

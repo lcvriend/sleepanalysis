@@ -18,7 +18,7 @@
         <img src="static/noun-sleep-disorder-5145226.svg" alt="">
     </header>
     <main>
-        <section class="no-print">
+        <section class="controles no-print">
             <h2>Laad data <span>(Dit gedeelte wordt niet geprint/geëxporteerd)</span></h2>
             <details>
                 <summary>Bekijk <strong>instructies</strong></summary>
@@ -48,7 +48,7 @@
                     </div>
                 </div>
             </details>
-            <div class="controls">
+            <div class="loaders">
                 <div class="loader-file">
                     <h3>Bestand</h3>
                     <label for="fileInput">Selecteer een <em>csv</em> bestand:</label>
@@ -67,7 +67,7 @@
             <p>
                 Een slaapanalyse is een methode binnen de orthopedagogiek om slaapproblemen in kaart te brengen. Hierbij wordt gedurende een aantal nachten het slaappatroon geobserveerd en geregistreerd. In deze slaapanalyse wordt het slaappatroon geanalyseerd op basis van de volgende indicatoren:
             </p>
-            <table>
+            <table id="table-norms">
                 <thead>
                     <tr>
                         <th>Indicator</th>
@@ -79,12 +79,20 @@
                     <tr>
                         <th>Slaapduur</th>
                         <td>Totaalduur slapen</td>
-                        <td>Minstens 7 uur per nacht (<a href="https://doi.org/10.1016/j.socscimed.2010.05.041">Buxton &amp; Marcelli, 2010</a>)</td>
+                        <td>
+                            <div>
+                                Minstens 7 uur per nacht<sup>1</sup>
+                            </div>
+                        </td>
                     </tr>
                     <tr>
                         <th>Slaapefficiëntie</th>
                         <td>Verhouding in bed/slapen</td>
-                        <td>Minstens 85% (<a href="https://psycnet.apa.org/doi/10.1037/a0028204">Astill e.a., 2012</a>)</td>
+                        <td>
+                            <div>
+                                Minstens 85%<sup>2</sup>
+                            </div>
+                        </td>
                     </tr>
                     <tr>
                         <th rowspan="3">Slaapcontinuïteit</th>
@@ -101,6 +109,8 @@
                     </tr>
                 </tbody>
             </table>
+            <p>[1] <a href="https://doi.org/10.1016/j.socscimed.2010.05.041">Buxton &amp; Marcelli, 2010</a></p>
+            <p>[2] <a href="https://psycnet.apa.org/doi/10.1037/a0028204">Astill e.a., 2012</a></p>
         </section>
         <section class="output hide">
             <h2>Gegevens</h2>
@@ -111,7 +121,7 @@
             <p>
                 Onderstaande tabel bevat de slaapkwantificatie per sessie en gemiddeld voor de gehele observatieduur. Indien een variabele rood is gemarkeerd betekent dit dat de gestelde norm voor een gezond slaappatroon is overschreden.
             </p>
-            <div id="table"></div>
+            <div id="table-sleepquantification"></div>
         </section>
         <section class="output hide">
             <h2>Grafieken</h2>
@@ -133,6 +143,9 @@
     import { analyzeSleepPatterns } from "./src/sleepanalysis.js"
     import { Data } from "./src/data.js"
     import { views } from "./src/chart.js"
+    import { addColumnNamesToCells } from "./src/layout.js"
+
+    document.querySelectorAll("table").forEach(table => addColumnNamesToCells(table))
 
     const loadExample = document.getElementById("loadExample")
     const fileInput = document.getElementById("fileInput")
@@ -141,7 +154,7 @@
     const elementIds = {
         timelines: "#chart-timelines",
         percentages: "#chart-percentages",
-        table: "#table",
+        table: "#table-sleepquantification",
         metadata: "#metadata",
     }
 
@@ -172,6 +185,7 @@
 
     function showOutputSections() {
         errorMessage.innerHTML = ""
+        addColumnNamesToCells(document.querySelector(elementIds.table))
         outputSections.forEach(section => section.classList.remove("hide"))
         outputSections[0].scrollIntoView({ behavior: "smooth" })
     }
