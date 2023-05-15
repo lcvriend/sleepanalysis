@@ -128,7 +128,7 @@ function getIndicator(data, options) {
     return {
         value: value,
         formatted: options.formatter ? options.formatter(value) : value,
-        class: passesNorm ? "" : ' class="issue"',
+        class: passesNorm ? "" : ` class="issue"`,
     }
 }
 
@@ -156,5 +156,5 @@ function formatTime(milliseconds) {
 
 function formatPercentage(percentage) {
     return percentage
-        .toLocaleString(undefined, {style: 'percent', minimumFractionDigits: 1})
+        .toLocaleString(undefined, {style: "percent", minimumFractionDigits: 1})
 }
