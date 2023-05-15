@@ -155,7 +155,7 @@ ol, ul {
         text-align: left;
     }
     [id^="table"] th {
-        margin-top: 2rem;
+        margin-top: 1rem;
     }
     [id^="table"] td:last-child {
         margin-bottom: 1rem;
