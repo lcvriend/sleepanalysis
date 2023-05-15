@@ -58,6 +58,9 @@ section {
 .loader-example button {
     margin-block: .25rem;
 }
+[class^="loader"] h3 {
+    margin-bottom: 0;
+}
 [id^="chart"] + [id^="chart"] {
     margin-top: 1rem;
 }
