@@ -166,6 +166,38 @@ th, td {
 }
 
 @media print {
+    @page {
+        margin: 2cm;
+    }
+    body {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* urls */
+    a:link,
+    a:visited,
+    a {
+        background: transparent;
+        color: #520;
+        font-weight: bold;
+        text-decoration: underline;
+        text-align: left;
+    }
+    a {
+        page-break-inside: avoid
+    }
+    a[href^=http]:after {
+        content: " < " attr(href) "> ";
+    }
+    article a[href^="#"]:after {
+        content: "";
+    }
+    a:not(:local-link):after {
+        content: " < " attr(href) "> ";
+    }
+
     .no-print {
         display: none !important;
     }
@@ -175,7 +207,7 @@ th, td {
 }
 
 /* response table */
-@media (max-width: 800px) {
+@media screen and (max-width: 800px) {
     [id^="table"] thead {
         display: none;
     }
