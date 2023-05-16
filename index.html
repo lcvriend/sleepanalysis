@@ -20,9 +20,13 @@
     <main>
         <section class="controles no-print">
             <h2>Laad data <span>(Dit gedeelte wordt niet geprint/geëxporteerd)</span></h2>
-            <details>
-                <summary>Bekijk <strong>instructies</strong></summary>
-                <div class="instructions">
+            <div class="panel">
+                <div>
+                    <button class="panel-trigger" aria-expanded="false">
+                        Bekijk <strong>instructies</strong>
+                    </button>
+                </div>
+                <div class="panel-content instructions">
                     <div>
                         <p>Sla observaties op als <a href="https://nl.wikipedia.org/wiki/Kommagescheiden_bestand">csv-bestand</a>.</p>
                         <p>Deze velden zijn verplicht:</p>
@@ -47,7 +51,7 @@
                         </p>
                     </div>
                 </div>
-            </details>
+            </div>
             <div class="loaders">
                 <div class="loader-file">
                     <h3>Bestand</h3>
@@ -65,7 +69,7 @@
         <section>
             <h2>Toelichting</h2>
             <p>
-                Een slaapanalyse is een methode binnen de orthopedagogiek om slaapproblemen in kaart te brengen. Hierbij wordt gedurende een aantal nachten het slaappatroon geobserveerd en geregistreerd. In deze slaapanalyse wordt het slaappatroon geanalyseerd op basis van de volgende indicatoren:
+                Een <strong>slaapanalyse</strong> is een methode binnen de orthopedagogiek om slaapproblemen in kaart te brengen. Hierbij wordt gedurende een aantal nachten het slaappatroon geobserveerd en geregistreerd. In deze slaapanalyse wordt het slaappatroon geanalyseerd op basis van de volgende indicatoren:
             </p>
             <table id="table-norms">
                 <thead>
@@ -195,5 +199,28 @@
         errorMessage.innerHTML = "<strong>Foutmelding!</strong> er is iets mis met het csv bestand."
     }
 
+    document.querySelector(".panel").addEventListener("click", event => {
+        const panel = event.target.closest(".panel")
+        togglePanel(panel)
+    })
+
+    function togglePanel(panel) {
+        const button = panel.querySelector("button")
+        const isOpened = button.getAttribute("aria-expanded")
+
+        if (isOpened === "true") {
+            panel
+                .querySelector("button")
+                .setAttribute("aria-expanded", false)
+            panel
+                .querySelector(".panel-content")
+                .setAttribute("aria-hidden", true)
+        } else {
+            panel.querySelector("button").setAttribute("aria-expanded", true)
+            panel
+                .querySelector(".panel-content")
+                .setAttribute("aria-hidden", false)
+        }
+    }
 </script>
 </body>
