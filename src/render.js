@@ -7,13 +7,13 @@ export async function renderAnalysis(data, elementIds, options = {}) {
     console.table(data.values)
     await renderChart(
         elementIds.timelines,
-        "specs/timelines.json",
+        "../specs/timelines.json",
         data,
         options.timelines
     )
     await renderChart(
         elementIds.percentages,
-        "specs/percentages.json",
+        "../specs/percentages.json",
         data,
         options.percentages
     )
