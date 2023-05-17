@@ -1,7 +1,7 @@
 let views = {}
 
 export async function renderChart(chartId, urlToSpec, data, options = {}) {
-    const baseSpec = await loadJSONFile("../specs/_base_.json")
+    const baseSpec = await loadJSONFile("./specs/_base_.json")
     const chartSpec = await loadJSONFile(urlToSpec)
     const spec = merge({...baseSpec, ...chartSpec}, options)
     spec.data.values = data.values
