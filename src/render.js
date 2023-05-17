@@ -1,13 +1,22 @@
-import { Data } from "./data.js"
-import { renderChart, getSpecChartTimelines, getSpecChartPercentages } from "./chart.js"
+import { renderChart } from "./chart.js"
 import { renderTable } from "./table.js"
 import { renderMetaData } from "./metadata.js"
 
 
-export function analyzeSleepPatterns(data, elementIds) {
+export async function renderAnalysis(data, elementIds, options = {}) {
     console.table(data.values)
-    renderChart(elementIds.timelines, getSpecChartTimelines, data)
-    renderChart(elementIds.percentages, getSpecChartPercentages, data)
+    await renderChart(
+        elementIds.timelines,
+        "specs/timelines.json",
+        data,
+        options.timelines
+    )
+    await renderChart(
+        elementIds.percentages,
+        "specs/percentages.json",
+        data,
+        options.percentages
+    )
     renderTable(elementIds.table, data)
     renderMetaData(elementIds.metadata, data)
 }

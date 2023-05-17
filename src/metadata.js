@@ -1,3 +1,6 @@
+import { addOptionsMenuAboveTable } from "./layout.js"
+
+
 export function renderMetaData(metaDataId, data) {
     const now = new Date()
     const formattedDate = now.toLocaleString(undefined, {
@@ -9,7 +12,8 @@ export function renderMetaData(metaDataId, data) {
     })
     const firstDate = Math.min(...data.values.map(({ timestamp}) => timestamp))
     const lastDate = Math.max(...data.values.map(({ timestamp}) => timestamp))
-    document.querySelector(metaDataId).innerHTML = `<table>
+    const container = document.querySelector(metaDataId)
+    container.innerHTML = `<table id="meta-data">
         <tr>
             <th>Aangemaakt</th>
             <td>${formattedDate}</td>
@@ -27,4 +31,5 @@ export function renderMetaData(metaDataId, data) {
             <td>${data.values.length}</td>
         </tr>
     </table>`
+    addOptionsMenuAboveTable(container.querySelector("table"))
 }

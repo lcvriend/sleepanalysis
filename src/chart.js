@@ -1,273 +1,57 @@
 let views = {}
 
-
-export function renderChart(chartId, specGetter, data) {
-    const spec = specGetter()
+export async function renderChart(chartId, urlToSpec, data, options = {}) {
+    const baseSpec = await loadJSONFile("specs/_base_.json")
+    const chartSpec = await loadJSONFile(urlToSpec)
+    const spec = merge({...baseSpec, ...chartSpec}, options)
     spec.data.values = data.values
+
     vegaEmbed(chartId, spec)
-        .then(result => {
-            views[chartId] = result.view
+        .then(({ view }) => {
+            views[chartId] = view
         })
         .catch(error => console.log(error))
 }
 
-
-const baseSpec = {
-    "$schema": "https://vega.github.io/schema/vega-lite/v5.9.0.json",
-    "config": {
-        "font": "Georgia",
-        "header": {
-            "titleFontSize": 16,
-            "labelFontSize": 14
-        },
-        "axis": {
-            "titleFontSize": 16,
-            "labelFontSize": 14,
-            "labelAngle": 270,
-            "grid": true
-        },
-        "legend": {
-            "titleFontSize": 16,
-            "labelFontSize": 14
+async function loadJSONFile(url) {
+    try {
+        const response = await fetch(url)
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`)
         }
-    },
-    "data": {
-        "values": []
-    },
-}
-
-
-export function getSpecChartTimelines() {
-    const spec = {
-        "title": {
-            "text": "Tijdlijnen per sessie",
-            "subtitle": [
-                "Mouseover om details te zien bij de observaties.",
-                "(Shift-)klik op label(s) in legende om status(sen) uit te lichten."
-            ],
-            "fontSize": 18,
-            "offset": 24,
-        },
-        "params": [{
-            "name": "category",
-            "select": {"type": "point", "fields": ["category"]},
-            "bind": "legend"
-          }],
-        "encoding": {
-            "color": {
-                "field": "category",
-                "scale": {
-                    "domain": [
-                        "Inslapen",
-                        "Slapen",
-                        "Wakker",
-                        "Waken",
-                        "Uit bed"
-                    ],
-                    "range": [
-                        "#4c78a8",
-                        "#54a24b",
-                        "#e45756",
-                        "#eeca3b",
-                        "#ff9da6"
-                    ]
-                },
-                "type": "nominal",
-                "title": "Categorie"
-            },
-            "opacity": {
-                "condition": {"param": "category", "value": 1},
-                "value": 0.2
-            },
-            "row": {
-                "field": "key",
-                "type": "nominal",
-                "title": "Sessie"
-            },
-            "tooltip": [
-                {
-                    "field": "key",
-                    "type": "nominal",
-                    "title": "Sessie"
-                },
-                {
-                    "field": "category",
-                    "type": "nominal",
-                    "title": "Status"
-                },
-                {
-                    "field": "duration",
-                    "format": "%H:%M",
-                    "type": "temporal",
-                    "title": "Duur"
-                },
-                {
-                    "field": "timestamp",
-                    "format": "%x %H:%M",
-                    "type": "temporal",
-                    "title": "Begin"
-                },
-                {
-                    "field": "timestamp2",
-                    "format": "%x %H:%M",
-                    "type": "temporal",
-                    "title": "Eind"
-                }
-            ],
-            "x": {
-                "axis": {
-                    "labelExpr": "timeFormat(timeOffset('hours', datum.value, 12), '%H:%M')",
-                    "title": "Tijdstip"
-                },
-                "field": "start_offs",
-                "timeUnit": "hoursminutes",
-                "type": "temporal"
-            },
-            "x2": {
-                "field": "end_offs",
-                "timeUnit": "hoursminutes",
-            },
-            "y": {"value": 10},
-            "y2": {"value": 55}
-        },
-        "mark": {
-            "type": "rect",
-            "cornerRadius": 4
-        },
-        "transform": [
-            {
-                "as": "start_offs",
-                "calculate": "timeOffset('hours', datum.timestamp, -12)"
-            },
-            {
-                "as": "end_offs",
-                "calculate": "timeOffset('hours', datum.timestamp2, -12)"
-            },
-            {
-                "as": "duration",
-                "calculate": "timeOffset('hours', datum.duration, -1)"
-            }
-        ],
-        "width": 600,
-        "height": 64
+        const data = await response.json()
+        return data
+    } catch (error) {
+        console.error("Error:", error)
+        return null
     }
-    return {...baseSpec, ...spec}
 }
 
+// taken from https://thescottyjam.github.io/snap.js/#!/nolodash/merge
+const isObject = value => value !== null && typeof value === "object"
 
-export function getSpecChartPercentages() {
-    const spec = {
-        "title": {
-            "text": "Totaalpercentages per slaapstatus",
-            "subtitle": "Mouseover om categorie en percentages te zien.",
-            "fontSize": 18,
-            "offset": 24,
-            "anchor": "start",
-        },
-        "transform": [
-            {
-                "filter": "datum.category !== 'Uit bed'"
-            },
-            {
-                "aggregate": [{
-                    "op": "sum",
-                    "field": "duration",
-                    "as": "duration"
-                }],
-                "groupby": [
-                    "category"
-                ]
-            },
-            {
-                "joinaggregate": [{
-                    "op": "sum",
-                    "field": "duration",
-                    "as": "totalDuration"
-                }],
-            },
-            {
-                "calculate": "datum.duration/datum.totalDuration",
-                "as": "percentage"
-            },
-            {
-                "calculate": "format(datum.percentage, '.0%')",
-                "as": "percentageFormatted"
-            },
-        ],
-        "encoding": {
-            "theta": {
-                "field": "percentage",
-                "type": "quantitative",
-                "stack": true
-            },
-            "color": {
-                "field": "category",
-                "scale": {
-                    "domain": [
-                        "Inslapen",
-                        "Slapen",
-                        "Wakker",
-                        "Waken",
-                        "Uit bed"
-                    ],
-                    "range": [
-                        "#4c78a8",
-                        "#54a24b",
-                        "#e45756",
-                        "#eeca3b",
-                        "#ff9da6"
-                    ]
-                },
-                "type": "nominal",
-                "title": "Categorie"
-            },
-            "order": {
-                "field": "percentage",
-                "type": "quantitative",
-                "sort": "descending"
-            },
-            "tooltip": [
-                {
-                    "field": "category",
-                    "type": "nominal",
-                    "title": "Status"
-                },
-                {
-                    "field": "percentage",
-                    "type": "nominal",
-                    "format": ".0%",
-                    "title": "Percentage"
-                },
-            ]
-        },
-        "layer": [
-            {
-                "mark": {
-                    "type": "arc",
-                    "innerRadius": 90,
-                    "outerRadius": 180
-                },
-            },
-            {
-                "mark": {
-                    "type": "text",
-                    "fill": "black",
-                    "radius": 210,
-                    "fontSize": 14
-                },
-                "encoding": {
-                    "text": {
-                        "field": "percentageFormatted",
-                        "type": "nominal"
-                    }
-                }
+const isPlainObject = value => {
+    if (!isObject(value)) return false
+    const prototype = Object.getPrototypeOf(value)
+    return prototype === null || prototype === Object.prototype
+}
+
+function merge(object, ...sources) {
+    for (const source of sources) {
+        for (const [key, value] of Object.entries(source)) {
+            if (value === undefined) { continue }
+            if (!isPlainObject(value) && !Array.isArray(value)) {
+                object[key] = value
+            } else if (Array.isArray(value) && !Array.isArray(object[key])) {
+                object[key] = value
+            } else if (!isObject(object[key])) {
+                object[key] = value
+            } else {
+                merge(object[key], value)
             }
-        ],
-        "width": 400,
-        "height": 400
+        }
     }
-    return {...baseSpec, ...spec}
+    return object
 }
-
 
 export { views }

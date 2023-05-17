@@ -1,0 +1,23 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.9.0.json",
+    "config": {
+        "font": "Georgia",
+        "header": {
+            "titleFontSize": 16,
+            "labelFontSize": 14
+        },
+        "axis": {
+            "titleFontSize": 16,
+            "labelFontSize": 14,
+            "labelAngle": 270,
+            "grid": true
+        },
+        "legend": {
+            "titleFontSize": 16,
+            "labelFontSize": 14
+        }
+    },
+    "data": {
+        "values": []
+    }
+}

@@ -1,0 +1,113 @@
+{
+    "title": {
+        "text": "Totaalpercentages per slaapstatus",
+        "fontSize": 18,
+        "offset": 24,
+        "anchor": "start"
+    },
+    "transform": [
+        {
+            "filter": "datum.category !== 'Uit bed'"
+        },
+        {
+            "aggregate": [
+                {
+                    "op": "sum",
+                    "field": "duration",
+                    "as": "duration"
+                }
+            ],
+            "groupby": [
+                "category"
+            ]
+        },
+        {
+            "joinaggregate": [
+                {
+                    "op": "sum",
+                    "field": "duration",
+                    "as": "totalDuration"
+                }
+            ]
+        },
+        {
+            "calculate": "datum.duration/datum.totalDuration",
+            "as": "percentage"
+        },
+        {
+            "calculate": "format(datum.percentage, '.0%')",
+            "as": "percentageFormatted"
+        }
+    ],
+    "encoding": {
+        "theta": {
+            "field": "percentage",
+            "type": "quantitative",
+            "stack": true
+        },
+        "color": {
+            "field": "category",
+            "scale": {
+                "domain": [
+                    "Inslapen",
+                    "Slapen",
+                    "Wakker",
+                    "Waken",
+                    "Uit bed"
+                ],
+                "range": [
+                    "#4c78a8",
+                    "#54a24b",
+                    "#e45756",
+                    "#eeca3b",
+                    "#ff9da6"
+                ]
+            },
+            "type": "nominal",
+            "title": "Categorie"
+        },
+        "order": {
+            "field": "percentage",
+            "type": "quantitative",
+            "sort": "descending"
+        },
+        "tooltip": [
+            {
+                "field": "category",
+                "type": "nominal",
+                "title": "Status"
+            },
+            {
+                "field": "percentage",
+                "type": "nominal",
+                "format": ".0%",
+                "title": "Percentage"
+            }
+        ]
+    },
+    "layer": [
+        {
+            "mark": {
+                "type": "arc",
+                "innerRadius": 90,
+                "outerRadius": 180
+            }
+        },
+        {
+            "mark": {
+                "type": "text",
+                "fill": "black",
+                "radius": 210,
+                "fontSize": 14
+            },
+            "encoding": {
+                "text": {
+                    "field": "percentageFormatted",
+                    "type": "nominal"
+                }
+            }
+        }
+    ],
+    "width": 400,
+    "height": 400
+}

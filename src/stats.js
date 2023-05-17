@@ -1,5 +1,5 @@
 function getSleepEfficiency(data) {
-    const { totalTimeInBed, totalSleep} = data
+    const { totalTimeInBed, totalSleep } = data
     return totalSleep / totalTimeInBed
 }
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,10 +9,10 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.9.0"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <script src=" https://cdn.jsdelivr.net/npm/@linways/table-to-excel@1.0.4/dist/tableToExcel.min.js "></script>
     <link rel="stylesheet" href="static/stylesheet.css">
-    <style>
-    </style>
 </head>
+
 <body>
     <header>
         <h1>Slaapanalyse</h1>
@@ -28,7 +29,10 @@
                 </div>
                 <div class="panel-content instructions">
                     <div>
-                        <p>Sla observaties op als <a href="https://nl.wikipedia.org/wiki/Kommagescheiden_bestand">csv-bestand</a>.</p>
+                        <p>
+                            Sla observaties op als <a
+                                href="https://nl.wikipedia.org/wiki/Kommagescheiden_bestand">csv-bestand</a>.
+                        </p>
                         <p>Deze velden zijn verplicht:</p>
                         <ol>
                             <li>Sessie</li>
@@ -47,7 +51,8 @@
                             <li>Uit bed</li>
                         </ul>
                         <p>
-                            Zie <a href="https://github.com/lcvriend/sleepanalysis/blob/master/data/example.csv">voorbeeld.</a>
+                            Zie <a
+                                href="https://github.com/lcvriend/sleepanalysis/blob/master/data/example.csv">voorbeeld.</a>
                         </p>
                     </div>
                 </div>
@@ -66,11 +71,15 @@
             </div>
             <div id="errorMessage" class="issue"></div>
         </section>
+
         <section>
             <h2>Toelichting</h2>
             <p>
-                Een <strong>slaapanalyse</strong> is een methode binnen de orthopedagogiek om slaapproblemen in kaart te brengen. Hierbij wordt gedurende een aantal nachten het slaappatroon geobserveerd en geregistreerd. In deze slaapanalyse wordt het slaappatroon geanalyseerd op basis van de volgende indicatoren:
+                Een <strong>slaapanalyse</strong> is een methode binnen de orthopedagogiek om slaapproblemen in kaart te
+                brengen. Hierbij wordt gedurende een aantal nachten het slaappatroon geobserveerd en geregistreerd. In
+                deze slaapanalyse wordt het slaappatroon geanalyseerd op basis van de volgende indicatoren:
             </p>
+
             <table id="table-norms">
                 <thead>
                     <tr>
@@ -113,25 +122,43 @@
                     </tr>
                 </tbody>
             </table>
+
             <p>[1] <a href="https://doi.org/10.1016/j.socscimed.2010.05.041">Buxton &amp; Marcelli, 2010</a></p>
             <p>[2] <a href="https://psycnet.apa.org/doi/10.1037/a0028204">Astill e.a., 2012</a></p>
         </section>
+
         <section class="output hide">
-            <h2>Gegevens</h2>
-            <div id="metadata"></div>
+            <h2 style="margin-bottom: 0">Gegevens</h2>
+            <div id="table-meta-data"></div>
         </section>
+
         <section class="output hide">
             <h2>Tabel</h2>
             <p>
-                Onderstaande tabel bevat de slaapkwantificatie per sessie en gemiddeld voor de gehele observatieduur. Indien een variabele rood is gemarkeerd betekent dit dat de gestelde norm voor een gezond slaappatroon is overschreden.
+                Onderstaande tabel bevat de <strong>slaapkwantificatie</strong> per sessie en gemiddeld voor de gehele observatieduur.
+                Indien een variabele rood is gemarkeerd betekent dit dat de gestelde norm voor een gezond slaappatroon
+                is overschreden.
             </p>
             <div id="table-sleepquantification"></div>
         </section>
+
         <section class="output hide">
             <h2>Grafieken</h2>
-            <div id="chart-timelines"></div>
-            <div id="chart-percentages"></div>
+            <div class="wrapper-chart">
+                <div id="chart-timelines"></div>
+                <div class="chart-instructions no-print">
+                    <div>Mouseover om details te zien bij de observaties.</div>
+                    <div>(Shift-)klik op label(s) in legende om status(sen) uit te lichten.</div>
+                </div>
+            </div>
+            <div class="wrapper-chart">
+                <div id="chart-percentages"></div>
+                <div class="chart-instructions no-print">
+                    <div>Mouseover om categorie en percentages te zien.</div>
+                </div>
+            </div>
         </section>
+
         <section>
             <h2>Overige informatie</h2>
             <p>Deze tool is ontwikkeld door:</p>
@@ -139,88 +166,121 @@
                 <li>L.P.H. Vriend</li>
                 <li>L.C. Vriend</li>
             </ul>
-            <p>De code is onder <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPLv3</a> open source beschikbaar; zie <a href="https://github.com/lcvriend/sleepanalysis">github.com/lcvriend/sleepanalysis</a>.</p>
+            <p>De code is onder <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPLv3</a> open source
+                beschikbaar; zie <a
+                    href="https://github.com/lcvriend/sleepanalysis">github.com/lcvriend/sleepanalysis</a>.</p>
             <p>De grafieken worden gegenereerd met <a href="https://vega.github.io/vega-lite/">Vega-Lite</a>.</p>
         </section>
     </main>
-<script type="module">
-    import { analyzeSleepPatterns } from "./src/sleepanalysis.js"
-    import { Data } from "./src/data.js"
-    import { views } from "./src/chart.js"
-    import { addColumnNamesToCells } from "./src/layout.js"
+    <script type="module">
+        import { renderAnalysis } from "./src/render.js"
+        import { Data } from "./src/data.js"
+        import { views } from "./src/chart.js"
+        import { addColumnNamesToCells, addOptionsMenuAboveTable } from "./src/layout.js"
 
-    document.querySelectorAll("table").forEach(table => addColumnNamesToCells(table))
+        document.querySelectorAll("table").forEach(table => {
+            addColumnNamesToCells(table)
+            addOptionsMenuAboveTable(table)
+        })
 
-    const loadExample = document.getElementById("loadExample")
-    const fileInput = document.getElementById("fileInput")
-    const outputSections = document.querySelectorAll(".output")
-    const errorMessage = document.getElementById("errorMessage")
-    const elementIds = {
-        timelines: "#chart-timelines",
-        percentages: "#chart-percentages",
-        table: "#table-sleepquantification",
-        metadata: "#metadata",
-    }
-
-    fileInput.addEventListener("change", event => {
-        const file = event.target.files[0]
-        const reader = new FileReader()
-        reader.readAsText(file)
-        reader.onload = (event) => {
-            const source = event.target.result
-            const data = Data.fromCSV(source, handleError)
-            analyzeSleepPatterns(data, elementIds)
-            showOutputSections()
+        const loadExample = document.getElementById("loadExample")
+        const fileInput = document.getElementById("fileInput")
+        const outputSections = document.querySelectorAll(".output")
+        const errorMessage = document.getElementById("errorMessage")
+        const elementIds = {
+            timelines: "#chart-timelines",
+            percentages: "#chart-percentages",
+            table: "#table-sleepquantification",
+            metadata: "#table-meta-data",
         }
-    })
 
-    loadExample.addEventListener("click", () => {
-        fetch("data/example.csv")
-            .then(response => response.text())
-            .then(source => {
+        fileInput.addEventListener("change", event => {
+            const file = event.target.files[0]
+            const reader = new FileReader()
+            reader.readAsText(file)
+            reader.onload = (event) => {
+                const source = event.target.result
                 const data = Data.fromCSV(source, handleError)
-                analyzeSleepPatterns(data, elementIds)
-                showOutputSections()
-            })
-            .catch(error => {
-                console.error("Error:", error)
-            })
-    })
+                analyzeAndShow(data, elementIds)
+            }
+        })
 
-    function showOutputSections() {
-        errorMessage.innerHTML = ""
-        addColumnNamesToCells(document.querySelector(elementIds.table))
-        outputSections.forEach(section => section.classList.remove("hide"))
-        outputSections[0].scrollIntoView({ behavior: "smooth" })
-    }
+        loadExample.addEventListener("click", () => {
+            fetch("data/example.csv")
+                .then(response => response.text())
+                .then(source => {
+                    const data = Data.fromCSV(source, handleError)
+                    analyzeAndShow(data, elementIds)
+                })
+                .catch(error => {
+                    console.error("Error:", error)
+                })
+        })
 
-    function handleError(error) {
-        console.error("Error:", error)
-        errorMessage.innerHTML = "<strong>Foutmelding!</strong> er is iets mis met het csv bestand."
-    }
-
-    document.querySelector(".panel").addEventListener("click", event => {
-        const panel = event.target.closest(".panel")
-        togglePanel(panel)
-    })
-
-    function togglePanel(panel) {
-        const button = panel.querySelector("button")
-        const isOpened = button.getAttribute("aria-expanded")
-
-        if (isOpened === "true") {
-            panel
-                .querySelector("button")
-                .setAttribute("aria-expanded", false)
-            panel
-                .querySelector(".panel-content")
-                .setAttribute("aria-hidden", true)
-        } else {
-            panel.querySelector("button").setAttribute("aria-expanded", true)
-            panel
-                .querySelector(".panel-content")
-                .setAttribute("aria-hidden", false)
+        function analyzeAndShow(data, elementIds, options) {
+            renderAnalysis(data, elementIds, options)
+            unhideOutputSections()
         }
-    }
-</script>
+
+        function unhideOutputSections() {
+            errorMessage.innerHTML = ""
+            outputSections.forEach(section => section.classList.remove("hide"))
+            outputSections[0].scrollIntoView({ behavior: "smooth" })
+        }
+
+        function handleError(error) {
+            console.error("Error:", error)
+            errorMessage.innerHTML = "<strong>Foutmelding!</strong> er is iets mis met het csv bestand."
+        }
+
+        document.querySelector(".panel").addEventListener("click", event => {
+            const panel = event.target.closest(".panel")
+            togglePanel(panel)
+        })
+
+        function togglePanel(panel) {
+            const button = panel.querySelector("button")
+            const isOpened = button.getAttribute("aria-expanded")
+
+            if (isOpened === "true") {
+                panel
+                    .querySelector("button")
+                    .setAttribute("aria-expanded", false)
+                panel
+                    .querySelector(".panel-content")
+                    .setAttribute("aria-hidden", true)
+            } else {
+                panel.querySelector("button").setAttribute("aria-expanded", true)
+                panel
+                    .querySelector(".panel-content")
+                    .setAttribute("aria-hidden", false)
+            }
+        }
+
+        document.addEventListener("click", event => {
+            if (!event.target.matches(".table-actions a")) { return }
+            event.preventDefault()
+            const tableId = event.target.dataset.tableId
+            TableToExcel.convert(document.getElementById(tableId), {
+                name: `${tableId}.xlsx`,
+                sheet: {
+                    name: "slaapanalyse"
+                }
+            })
+        })
+
+        function handleClickOutsideDetails(event) {
+            const clickedInsideDetails = event.target.closest(".table-embed details")
+
+            if (!clickedInsideDetails) {
+                const detailsElements = document.querySelectorAll(".table-embed details")
+                detailsElements.forEach((details) => {
+                    details.removeAttribute("open")
+                })
+            }
+        }
+
+        document.addEventListener("click", handleClickOutsideDetails)
+
+    </script>
 </body>

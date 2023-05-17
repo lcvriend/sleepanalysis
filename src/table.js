@@ -1,5 +1,7 @@
 import { analysis, getAverage, getMode } from "./stats.js"
-import { norms } from "./sleepanalysis.js"
+import { addColumnNamesToCells, addOptionsMenuAboveTable } from "./layout.js"
+import { norms } from "./render.js"
+
 
 export function renderTable(tableId, data) {
     const tableSpecification = {}
@@ -53,7 +55,8 @@ export function renderTable(tableId, data) {
         tableSpecification[key].sleepEfficiency = getIndicator(data, options)
     }
 
-    const getValues = indicator => Object.values(tableSpecification).map(item => item[indicator].value)
+    const getValues = indicator => Object.values(tableSpecification)
+        .map(item => item[indicator].value)
     tableSpecification["Gem."] = {
         timeToSleep: getIndicator(getValues("timeToSleep"), {
             func: getAverage,
@@ -103,7 +106,8 @@ export function renderTable(tableId, data) {
         tableHTMLElements.push(`<tr>${rowHTMLElements.join("")}</tr>`)
     }
 
-    document.querySelector(tableId).innerHTML = `<table>
+    const table = document.querySelector(tableId)
+    table.innerHTML = `<table id="sleep-quantification">
         <thead>
             <tr>
                 <th>Sessie</th>
@@ -112,7 +116,7 @@ export function renderTable(tableId, data) {
                 <td>Totaal in bed</td>
                 <td>Totaal slaap</td>
                 <td>Totaal wakker</td>
-                <td>n wakker</td>
+                <td><em>n</em> wakker</td>
                 <td>Slaapefficiëntie</td>
             </tr>
         </thead>
@@ -120,6 +124,8 @@ export function renderTable(tableId, data) {
         ${tableHTMLElements.join("")}
         </tbody>
     </table>`
+    addColumnNamesToCells(table)
+    addOptionsMenuAboveTable(table)
 }
 
 function getIndicator(data, options) {
@@ -128,7 +134,7 @@ function getIndicator(data, options) {
     return {
         value: value,
         formatted: options.formatter ? options.formatter(value) : value,
-        class: passesNorm ? "" : ` class="issue"`,
+        class: passesNorm ? "" : ` class="issue" data-f-color="8b0000"`,
     }
 }
 
