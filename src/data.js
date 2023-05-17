@@ -89,10 +89,3 @@ function ungroup(groups) {
     }
     return ungrouped
 }
-
-class ParseError extends Error {
-    constructor(message) {
-        super(message)
-        this.name = "ParseError"
-    }
-}
