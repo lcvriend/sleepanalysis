@@ -80,48 +80,50 @@
                 deze slaapanalyse wordt het slaappatroon geanalyseerd op basis van de volgende indicatoren:
             </p>
 
-            <table id="table-norms">
-                <thead>
-                    <tr>
-                        <th>Indicator</th>
-                        <th>Variabele</th>
-                        <th>Norm</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th>Slaapduur</th>
-                        <td>Totaalduur slapen</td>
-                        <td>
-                            <div>
-                                Minstens 7 uur per nacht<sup>1</sup>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Slaapefficiëntie</th>
-                        <td>Verhouding in bed/slapen</td>
-                        <td>
-                            <div>
-                                Minstens 85%<sup>2</sup>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th rowspan="3">Slaapcontinuïteit</th>
-                        <td>Inslaapduur</td>
-                        <td>Binnen 30 min.</td>
-                    </tr>
-                    <tr>
-                        <td>Aantal keer wakker</td>
-                        <td>Max. 2 keer wakker</td>
-                    </tr>
-                    <tr>
-                        <td>Totaal duur wakker</td>
-                        <td>Minder dan 90 min. wakker na inslapen</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div id="table-sleep-norms">
+                <table id="sleep-norms">
+                    <thead>
+                        <tr>
+                            <th>Indicator</th>
+                            <th>Variabele</th>
+                            <th>Norm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Slaapduur</th>
+                            <td>Totaalduur slapen</td>
+                            <td>
+                                <div>
+                                    Minstens 7 uur per nacht<sup>1</sup>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Slaapefficiëntie</th>
+                            <td>Verhouding in bed/slapen</td>
+                            <td>
+                                <div>
+                                    Minstens 85%<sup>2</sup>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th rowspan="3">Slaapcontinuïteit</th>
+                            <td>Inslaapduur</td>
+                            <td>Binnen 30 min.</td>
+                        </tr>
+                        <tr>
+                            <td>Aantal keer wakker</td>
+                            <td>Max. 2 keer wakker</td>
+                        </tr>
+                        <tr>
+                            <td>Totaal duur wakker</td>
+                            <td>Minder dan 90 min. wakker na inslapen</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <p>[1] <a href="https://doi.org/10.1016/j.socscimed.2010.05.041">Buxton &amp; Marcelli, 2010</a></p>
             <p>[2] <a href="https://psycnet.apa.org/doi/10.1037/a0028204">Astill e.a., 2012</a></p>
@@ -178,10 +180,8 @@
         import { views } from "./src/chart.js"
         import { addColumnNamesToCells, addOptionsMenuAboveTable } from "./src/layout.js"
 
-        document.querySelectorAll("table").forEach(table => {
-            addColumnNamesToCells(table)
-            addOptionsMenuAboveTable(table)
-        })
+        document.querySelectorAll(`[id^="table"]`).forEach(container => addOptionsMenuAboveTable(container))
+        addColumnNamesToAllTables()
 
         const loadExample = document.getElementById("loadExample")
         const fileInput = document.getElementById("fileInput")
@@ -224,6 +224,7 @@
 
         function unhideOutputSections() {
             errorMessage.innerHTML = ""
+            addColumnNamesToAllTables()
             outputSections.forEach(section => section.classList.remove("hide"))
             outputSections[0].scrollIntoView({ behavior: "smooth" })
         }
@@ -231,6 +232,12 @@
         function handleError(error) {
             console.error("Error:", error)
             errorMessage.innerHTML = "<strong>Foutmelding!</strong> er is iets mis met het csv bestand."
+        }
+
+        function addColumnNamesToAllTables() {
+            document.querySelectorAll("table").forEach(table => {
+                addColumnNamesToCells(table)
+            })
         }
 
         document.querySelector(".panel").addEventListener("click", event => {

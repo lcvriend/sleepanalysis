@@ -1,5 +1,4 @@
 import { analysis, getAverage, getMode } from "./stats.js"
-import { addColumnNamesToCells, addOptionsMenuAboveTable } from "./layout.js"
 import { norms } from "./render.js"
 
 
@@ -124,8 +123,6 @@ export function renderTable(tableId, data) {
         ${tableHTMLElements.join("")}
         </tbody>
     </table>`
-    addColumnNamesToCells(table)
-    addOptionsMenuAboveTable(table)
 }
 
 function getIndicator(data, options) {

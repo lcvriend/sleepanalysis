@@ -1,6 +1,3 @@
-import { addOptionsMenuAboveTable } from "./layout.js"
-
-
 export function renderMetaData(metaDataId, data) {
     const now = new Date()
     const formattedDate = now.toLocaleString(undefined, {
@@ -14,22 +11,30 @@ export function renderMetaData(metaDataId, data) {
     const lastDate = Math.max(...data.values.map(({ timestamp}) => timestamp))
     const container = document.querySelector(metaDataId)
     container.innerHTML = `<table id="meta-data">
-        <tr>
-            <th>Aangemaakt</th>
-            <td>${formattedDate}</td>
-        </tr>
-        <tr>
-            <th>Periode</th>
-            <td>${(new Date(firstDate).toLocaleDateString())} - ${(new Date(lastDate).toLocaleDateString())}</td>
-        </tr>
-        <tr>
-            <th>Aantal sessies</th>
-            <td>${Object.keys(data.grouped).length}</td>
-        </tr>
-        <tr>
-            <th>Aantal observaties</th>
-            <td>${data.values.length}</td>
-        </tr>
+        <thead>
+            <tr>
+                <th>Kenmerk</th>
+                <th>Waarde</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Aangemaakt</th>
+                <td>${formattedDate}</td>
+            </tr>
+            <tr>
+                <th>Periode</th>
+                <td>${(new Date(firstDate).toLocaleDateString())} - ${(new Date(lastDate).toLocaleDateString())}</td>
+            </tr>
+            <tr>
+                <th>Aantal sessies</th>
+                <td>${Object.keys(data.grouped).length}</td>
+            </tr>
+            <tr>
+                <th>Aantal observaties</th>
+                <td>${data.values.length}</td>
+            </tr>
+        </tbody>
     </table>`
-    addOptionsMenuAboveTable(container.querySelector("table"))
+    // addOptionsMenuAboveTable(container.querySelector("table"))
 }
