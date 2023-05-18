@@ -321,12 +321,16 @@ th, td {
 
 /* response table */
 @media screen and (max-width: 800px) {
+    [id^="table"] table {
+        width: 100%;
+    }
     [id^="table"] thead {
         display: none;
     }
     [id^="table"] :where(th, td) {
         display: grid;
-        grid-template-columns: 1fr 2fr;
+        grid-template-columns: 100px 1fr;
+        gap: 1rem;
         text-align: left;
     }
     #table-sleepquantification td {
@@ -341,7 +345,9 @@ th, td {
     [id^="table"] :where(th, td)::before {
         content: attr(data-cell);
         color: black;
-        font-style: normal;
+        font-style: italic;
+        text-align: right;
+        font-size: .925em;
     }
     .issue {
         background-color: white;
