@@ -217,8 +217,8 @@
                 })
         })
 
-        function analyzeAndShow(data, elementIds, options) {
-            renderAnalysis(data, elementIds, options)
+        async function analyzeAndShow(data, elementIds, options) {
+            await renderAnalysis(data, elementIds, options)
             unhideOutputSections()
         }
 
