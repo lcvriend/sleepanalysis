@@ -52,8 +52,12 @@ ol, ul {
 .loaders {
     display: grid;
     gap: 1rem;
-    grid-template-columns: 1fr 1fr;
     justify-items: start;
+}
+@media (min-width: 35em) {
+    .loaders {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 [class^="loader"] h3 {
     margin-bottom: 0;
